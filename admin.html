@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ShopEasy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        @media (max-width: 768px) {
+            #adminSidebarToggle {
+                display: flex !important;
+            }
+        }
+    </style>
+</head>
+
+<body class="admin-body">
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <a href="/" class="sidebar-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Shop<span style="color: var(--admin-primary)">Easy</span></span>
+            </a>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="#" class="menu-link active" onclick="switchAdminTab('products'); return false;"
+                    id="menu-products">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link" onclick="switchAdminTab('orders'); return false;" id="menu-orders">
+                    <i class="fas fa-receipt"></i>
+                    <span>Orders</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#" class="menu-link" onclick="switchAdminTab('addProduct'); return false;"
+                    id="menu-addProduct">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Product</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/" class="menu-link">
+                    <i class="fas fa-store"></i>
+                    <span>View Store</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="user-snippet">
+                <div class="user-avatar">AD</div>
+                <div class="user-info">
+                    <span>Admin User</span>
+                    <small>Full Access</small>
+                </div>
+            </div>
+            <a href="/logout" class="menu-link" style="margin-top: 16px;">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Dashboard Area -->
+    <main class="main-dashboard">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-container">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+                <i
+                    class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                <span>{{ message }}</span>
+                <button class="flash-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <header class="admin-header">
+            <div class="header-left">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <button id="adminSidebarToggle" class="action-btn"
+                        style="display: none; width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--admin-border); background: white; cursor: pointer;">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div>
+                        <h1 id="dashboardTitle">Dashboard Overview</h1>
+                        <p>Monitor your performance and manage inventory</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="search-form" style="margin: 0; padding: 6px 12px;">
+                    <i class="fas fa-search" style="color: var(--gray-400); margin-right: 10px;"></i>
+                    <input type="text" placeholder="Global search..." class="search-input" style="width: 200px;">
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="admin-stats">
+            <div class="stat-card stat-products">
+                <div class="stat-icon"><i class="fas fa-box"></i></div>
+                <div class="stat-content">
+                    <span class="stat-value">{{ stats.total_products }}</span>
+                    <span class="stat-label">Products</span>
+                </div>
+            </div>
+            <div class="stat-card stat-orders">
+                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="stat-content">
+                    <span class="stat-value">{{ stats.total_orders }}</span>
+                    <span class="stat-label">Total Orders</span>
+                </div>
+            </div>
+            <div class="stat-card stat-users">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-content">
+                    <span class="stat-value">{{ stats.total_users }}</span>
+                    <span class="stat-label">Customers</span>
+                </div>
+            </div>
+            <div class="stat-card stat-revenue">
+                <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                <div class="stat-content">
+                    <span class="stat-value">₹{{ "%.0f"|format(stats.total_revenue) }}</span>
+                    <span class="stat-label">Stock Revenue</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Sections -->
+        <div class="admin-main-card">
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('products')">
+                    <i class="fas fa-box"></i> Inventory
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('orders')">
+                    <i class="fas fa-receipt"></i> Recent Orders
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('addProduct')">
+                    <i class="fas fa-plus"></i> New Product
+                </button>
+            </div>
+
+            <!-- Products Tab -->
+            <div class="admin-content" id="productsTab">
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Featured</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products %}
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <img src="/images/{{ product.image }}" alt="{{ product.name }}"
+                                            class="table-product-img">
+                                        <div style="display: flex; flex-direction: column;">
+                                            <strong style="color: #0f172a;">{{ product.name }}</strong>
+                                            <small style="color: #64748b;">ID: #{{ product.id }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span class="category-tag">{{ product.category }}</span></td>
+                                <td>₹{{ "%.2f"|format(product.price) }}</td>
+                                <td>
+                                    <span
+                                        class="stock-badge {% if product.stock > 10 %}stock-ok{% elif product.stock > 0 %}stock-low{% else %}stock-out{% endif %}">
+                                        {{ product.stock }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if product.featured %}
+                                    <span style="color: #f59e0b;"><i class="fas fa-star"></i> Featured</span>
+                                    {% else %}
+                                    <span style="color: #cbd5e1;"><i class="far fa-star"></i> Standard</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="table-actions">
+                                        <button class="action-btn edit-btn"
+                                            onclick="openEditProduct('{{ product.id }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form action="/admin/product/delete/{{ product.id }}" method="POST"
+                                            style="display:inline;" onsubmit="return confirm('Delete this product?');">
+                                            <button type="submit" class="action-btn delete-btn">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Orders Tab -->
+            <div class="admin-content hidden" id="ordersTab">
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td><strong style="color: var(--admin-primary);">#{{ order.id }}</strong></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="user-avatar" style="width: 32px; height: 32px; font-size: 12px;">{{
+                                            order.user.username[:1].upper() }}</div>
+                                        <span>{{ order.user.username }}</span>
+                                    </div>
+                                </td>
+                                <td>₹{{ "%.2f"|format(order.total_amount) }}</td>
+                                <td>
+                                    <span class="status-badge status-{{ order.status.lower() }}">
+                                        {{ order.status }}
+                                    </span>
+                                </td>
+                                <td>{{ order.created_at.strftime('%b %d, %Y') }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Add Product Tab -->
+            <div class="admin-content hidden" id="addProductTab">
+                <div class="admin-form-card">
+                    <form action="/admin/product/add" method="POST" enctype="multipart/form-data" class="admin-form">
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label for="productName">Product Name *</label>
+                                <input type="text" id="productName" name="name" required class="form-input"
+                                    placeholder="Enter product name">
+                            </div>
+                            <div class="form-group">
+                                <label for="productCategory">Category *</label>
+                                <select id="productCategory" name="category" class="form-input" required>
+                                    <option value="Shirts">Shirts</option>
+                                    <option value="T-Shirts">T-Shirts</option>
+                                    <option value="Footwear">Footwear</option>
+                                    <option value="Watches">Watches</option>
+                                    <option value="Electronics">Electronics</option>
+                                    <option value="Accessories">Accessories</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="productDesc">Description *</label>
+                            <textarea id="productDesc" name="description" required class="form-input form-textarea"
+                                rows="3" placeholder="Explain the features and benefits..."></textarea>
+                        </div>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label for="productHighlights">Highlights (separate with | )</label>
+                                <textarea id="productHighlights" name="highlights" class="form-input form-textarea"
+                                    rows="2" placeholder="e.g. 100% Cotton | Premium Finish"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="productSizes">Available Sizes (comma separated)</label>
+                                <input type="text" id="productSizes" name="sizes" class="form-input"
+                                    placeholder="e.g. S, M, L, XL">
+                            </div>
+                        </div>
+                        <div class="form-row-3">
+                            <div class="form-group">
+                                <label for="productPrice">Listing Price (₹) *</label>
+                                <input type="number" id="productPrice" name="price" required class="form-input"
+                                    step="0.01" placeholder="999.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="productOrigPrice">MRP / Original Price (₹)</label>
+                                <input type="number" id="productOrigPrice" name="original_price" class="form-input"
+                                    step="0.01" placeholder="1499.00">
+                            </div>
+                            <div class="form-group">
+                                <label for="productStock">Stock Quantity *</label>
+                                <input type="number" id="productStock" name="stock" required class="form-input"
+                                    placeholder="50">
+                            </div>
+                        </div>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label for="productImage">Product Image</label>
+                                <input type="file" id="productImage" name="image" accept="image/*"
+                                    class="form-input form-file">
+                            </div>
+                            <div class="form-group">
+                                <label class="admin-checkbox">
+                                    <input type="checkbox" name="featured">
+                                    <span>Feature on Homepage</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <button type="submit" class="btn btn-primary btn-lg" style="width: 200px;">
+                                <i class="fas fa-save"></i> Save Product
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Product Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Product Details</h2>
+                <button class="modal-close" onclick="closeEditModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" method="POST" enctype="multipart/form-data" class="admin-form">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Product Name *</label>
+                            <input type="text" id="editName" name="name" required class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label>Category *</label>
+                            <select id="editCategory" name="category" class="form-input">
+                                <option value="Shirts">Shirts</option>
+                                <option value="T-Shirts">T-Shirts</option>
+                                <option value="Footwear">Footwear</option>
+                                <option value="Watches">Watches</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Accessories">Accessories</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description *</label>
+                        <textarea id="editDesc" name="description" required class="form-input form-textarea"
+                            rows="3"></textarea>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Highlights (separate with | )</label>
+                            <textarea id="editHighlights" name="highlights" class="form-input form-textarea"
+                                rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Available Sizes</label>
+                            <input type="text" id="editSizes" name="sizes" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" id="editPrice" name="price" required class="form-input" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Original Price (₹)</label>
+                            <input type="number" id="editOrigPrice" name="original_price" class="form-input"
+                                step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock *</label>
+                            <input type="number" id="editStock" name="stock" required class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>New Image (optional)</label>
+                            <input type="file" name="image" accept="image/*" class="form-input form-file">
+                        </div>
+                        <div class="form-group">
+                            <label class="admin-checkbox">
+                                <input type="checkbox" id="editFeatured" name="featured">
+                                <span>Featured Product</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary" style="background: var(--admin-primary);">
+                            <i class="fas fa-check"></i> Update Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/script.js"></script>
+    <script>
+        // Enhanced Tab Switcher with Title Updates
+        function switchAdminTab(tabName) {
+            // Update Tab Buttons
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('onclick').includes(tabName)) tab.classList.add('active');
+            });
+
+            // Update Sidebar Links
+            document.querySelectorAll('.menu-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.id === `menu-${tabName}`) link.classList.add('active');
+            });
+
+            // Update Content
+            document.querySelectorAll('.admin-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            const selectedContent = document.getElementById(`${tabName}Tab`);
+            if (selectedContent) {
+                selectedContent.classList.remove('hidden');
+
+                // Update Page Title
+                const titles = {
+                    'products': 'Inventory Management',
+                    'orders': 'Order Tracking',
+                    'addProduct': 'Create New Listing'
+                };
+                document.getElementById('dashboardTitle').textContent = titles[tabName] || 'Dashboard Dashboard';
+            }
+        }
+
+        // Live Search for Products
+        document.querySelector('.search-input').addEventListener('input', function (e) {
+            const term = e.target.value.toLowerCase();
+            const activeTab = document.querySelector('.admin-content:not(.hidden)');
+            const rows = activeTab.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Database
+instance/
+*.db
+
+# Static
+static/images/*
+!static/images/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask
+.flask_env

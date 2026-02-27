@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure Checkout - ShopEasy">
+    <title>Secure Checkout - ShopEasy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        .checkout-header {
+            text-align: center;
+            padding: 120px 0 60px;
+        }
+
+        .checkout-title {
+            font-size: 48px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+            letter-spacing: -2px;
+        }
+
+        .checkout-subtitle {
+            color: #64748b;
+            font-size: 18px;
+        }
+
+        .checkout-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .checkout-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .checkout-input {
+            width: 100%;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #0f172a;
+            transition: all 0.3s;
+        }
+
+        .checkout-input:focus {
+            background: white;
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .checkout-sidebar {
+            position: sticky;
+            top: 120px;
+        }
+
+        .summary-mini-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 32px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .step-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #94a3b8;
+            font-weight: 800;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .step-pill.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .checkout-step {
+            transition: all 0.4s ease;
+        }
+
+        #reviewShippingDetails {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .review-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .review-detail-card {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .review-detail-card i {
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .review-detail-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .detail-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        .qr-section {
+            background: #fff;
+            border: 2px dashed var(--gray-200);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .qr-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            background: var(--gray-50);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid var(--gray-100);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Shop<span class="logo-accent">Easy</span></span>
+            </a>
+            <div class="nav-actions">
+                <a href="/cart" class="nav-action-btn"><i class="fas fa-arrow-left"></i><span
+                        class="nav-label">Back</span></a>
+                <button class="nav-action-btn mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-nav-links">
+                <a href="/" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+                {% if current_user.is_authenticated %}
+                <a href="/cart" class="mobile-nav-link"><i class="fas fa-shopping-cart"></i> Cart</a>
+                <a href="/logout" class="mobile-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                {% else %}
+                <a href="/login" class="mobile-nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="/register" class="mobile-nav-link"><i class="fas fa-user-plus"></i> Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="checkout-section">
+        <div class="checkout-header" data-aos="fade-down">
+            <h1 class="checkout-title">Checkout</h1>
+            <p class="checkout-subtitle">Securely complete your purchase</p>
+        </div>
+
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1fr 400px; gap: 60px; align-items: start;">
+                <div class="checkout-main-content">
+                    <!-- Shipping Step -->
+                    <div id="step1" class="checkout-step">
+                        <div class="checkout-card" data-aos="fade-right">
+                            <div class="step-pill step active">1</div>
+                            <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 32px; color: #0f172a;">Shipping
+                                Information</h2>
+                            <form id="shippingForm">
+                                <div class="form-row-2">
+                                    <div>
+                                        <label class="checkout-label">Full Name</label>
+                                        <input type="text" id="fullName" required class="checkout-input"
+                                            placeholder="e.g. John Doe">
+                                    </div>
+                                    <div>
+                                        <label class="checkout-label">Phone Number</label>
+                                        <input type="tel" id="phone" required class="checkout-input"
+                                            placeholder="+91 XXXX XXX XXX">
+                                    </div>
+                                </div>
+                                <div style="margin-bottom: 24px;">
+                                    <label class="checkout-label">Shipping Address</label>
+                                    <textarea id="address" required class="checkout-input" rows="3"
+                                        placeholder="Street, City, Pincode"></textarea>
+                                </div>
+                                <div class="form-row-3">
+                                    <div>
+                                        <label class="checkout-label">City</label>
+                                        <input type="text" id="city" required class="checkout-input"
+                                            placeholder="Mumbai">
+                                    </div>
+                                    <div>
+                                        <label class="checkout-label">State</label>
+                                        <input type="text" id="state" required class="checkout-input"
+                                            placeholder="Maharashtra">
+                                    </div>
+                                    <div>
+                                        <label class="checkout-label">Pincode</label>
+                                        <input type="text" id="zipcode" required class="checkout-input"
+                                            placeholder="XXXXXX">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="goToStep(2)"
+                                    style="width: 100%; height: 56px; border-radius: 12px; font-weight: 800; margin-top: 32px;">
+                                    COMPLETE SHIPPING
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Payment Step -->
+                    <div id="step2" class="checkout-step hidden">
+                        <!-- Shipping Summary (Review) -->
+                        <div class="checkout-card" data-aos="fade-right">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                                <h2 style="font-size: 20px; font-weight: 800; color: #0f172a;">Review Shipping</h2>
+                                <button type="button" onclick="goToStep(1)"
+                                    style="background: none; border: none; color: var(--primary); font-weight: 700; cursor: pointer;">Edit</button>
+                            </div>
+                            <div id="reviewShippingDetails">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+
+                        <div class="checkout-card" data-aos="fade-right">
+                            <div class="step-pill step">2</div>
+                            <h2 style="font-size: 24px; font-weight: 800; margin-bottom: 32px; color: #0f172a;">Payment
+                                Method</h2>
+                            <div style="display: flex; flex-direction: column; gap: 16px;">
+                                <label
+                                    style="display: flex; align-items: center; gap: 16px; padding: 20px; border: 1px solid #f1f5f9; border-radius: 16px; cursor: pointer;">
+                                    <input type="radio" name="payment" value="razorpay" checked
+                                        onchange="toggleQrCode(false)">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <i class="fas fa-credit-card"
+                                            style="font-size: 20px; color: var(--primary);"></i>
+                                        <div>
+                                            <div style="font-weight: 800; color: #0f172a;">Razorpay Secure</div>
+                                            <div style="font-size: 13px; color: #64748b;">Cards, UPI, NetBanking</div>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label
+                                    style="display: flex; align-items: center; gap: 16px; padding: 20px; border: 1px solid #f1f5f9; border-radius: 16px; cursor: pointer;">
+                                    <input type="radio" name="payment" value="cod" onchange="toggleQrCode(false)">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <i class="fas fa-hand-holding-dollar"
+                                            style="font-size: 20px; color: #10b981;"></i>
+                                        <div>
+                                            <div style="font-weight: 800; color: #0f172a;">Cash on Delivery</div>
+                                            <div style="font-size: 13px; color: #64748b;">Pay when your order arrives
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label
+                                    style="display: flex; align-items: center; gap: 16px; padding: 20px; border: 1px solid #f1f5f9; border-radius: 16px; cursor: pointer;">
+                                    <input type="radio" name="payment" value="free" onchange="toggleQrCode(true)">
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <i class="fas fa-qrcode" style="font-size: 20px; color: #6366f1;"></i>
+                                        <div>
+                                            <div style="font-weight: 800; color: #0f172a;">Scan & Pay (Free)</div>
+                                            <div style="font-size: 13px; color: #64748b;">Instant processing via QR
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <!-- QR Code Section -->
+                            <div id="qrCodeSection" class="qr-section hidden">
+                                <div class="qr-container">
+                                    <img src="/static/images/payment_qr.png" alt="Scan to Pay"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <h3 style="font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Scan
+                                    to Complete Payment</h3>
+                                <p style="font-size: 14px; color: #64748b; margin-bottom: 20px;">Use any UPI app to scan
+                                    and pay instantly.</p>
+                                <div style="display: flex; justify-content: center; gap: 15px;">
+                                    <i class="fab fa-google-pay" style="font-size: 30px; color: #5f6368;"></i>
+                                    <i class="fab fa-amazon-pay" style="font-size: 30px; color: #5f6368;"></i>
+                                    <i class="fas fa-mobile-alt" style="font-size: 26px; color: #5f6368;"></i>
+                                </div>
+                            </div>
+
+                            <button type="button" id="payBtn" class="btn btn-primary" onclick="processPayment()"
+                                style="width: 100%; height: 64px; border-radius: 16px; font-weight: 800; font-size: 18px; margin-top: 32px;">
+                                COMPLETE PURCHASE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <aside class="checkout-sidebar" data-aos="fade-left">
+                    <div class="summary-mini-card">
+                        <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 24px; color: #0f172a;">Order
+                            Summary</h3>
+                        <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+                            {% for item in cart_items %}
+                            <div style="display: flex; gap: 16px; align-items: center;">
+                                <div
+                                    style="width: 60px; height: 60px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0; overflow: hidden; flex-shrink: 0;">
+                                    <img src="/images/{{ item.product.image }}"
+                                        style="width: 100%; height: 100%; object-fit: contain;">
+                                </div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 800; font-size: 14px; color: #0f172a;">{{ item.product.name
+                                        }}</div>
+                                    <div style="font-size: 12px; color: #64748b;">Qty: {{ item.quantity }}</div>
+                                </div>
+                                <div style="font-weight: 800; font-size: 14px;">₹{{ "%.0f"|format(item.product.price *
+                                    item.quantity) }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div style="border-top: 1px solid #e2e8f0; padding-top: 24px;">
+                            <div
+                                style="display: flex; justify-content: space-between; margin-bottom: 12px; color: #64748b; font-weight: 600;">
+                                <span>Subtotal</span>
+                                <span>₹{{ "%.0f"|format(total) }}</span>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; margin-bottom: 24px; color: #10b981; font-weight: 800;">
+                                <span>Shipping</span>
+                                <span>FREE</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 800; color: #0f172a;">Grand Total</span>
+                                <strong style="font-size: 24px; font-weight: 800; color: var(--primary);">₹{{
+                                    "%.0f"|format(total) }}</strong>
+                            </div>
+                        </div>
+                        <div
+                            style="margin-top: 32px; background: #eff6ff; padding: 16px; border-radius: 12px; display: flex; gap: 12px; align-items: center; color: #1e40af; font-size: 13px; font-weight: 600;">
+                            <i class="fas fa-shield-check"></i>
+                            Bespoke security & protection active
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 ShopEasy. Handcrafted for excellence.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+    <script src="/static/js/script.js"></script>
+    <script>
+        const RAZORPAY_KEY = '{{ razorpay_key }}';
+        const ORDER_TOTAL = Number('{{ total if total >= 999 else total + 99 }}');
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="ShopEasy - Your destination for quality products. Experience great shopping at the best prices.">
+    <title>ShopEasy - Your Everyday Shopping Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 0 60px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: #0f172a;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: #64748b;
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .hero-badge {
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .hero-visual {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+        }
+
+        .hero-img-box {
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: transform 0.3s ease;
+            border: 4px solid white;
+        }
+
+        .hero-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-img-box:hover {
+            transform: translateY(-10px);
+        }
+
+        .box-lg {
+            width: 280px;
+            height: 380px;
+        }
+
+        .box-sm {
+            width: 220px;
+            height: 300px;
+            margin-top: 60px;
+        }
+
+        .nav-logo-img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo span {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+        }
+
+        .category-card {
+            background: white;
+            border: 1px solid #f1f5f9;
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .category-card:hover {
+            border-color: var(--primary);
+            background: #f8fafc;
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .category-icon {
+            width: 64px;
+            height: 64px;
+            background: #f1f5f9;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+            margin: 0 auto 16px;
+            transition: all 0.3s;
+        }
+
+        .category-card:hover .category-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Product Card View Details Overlay */
+        .product-image-wrap {
+            position: relative;
+        }
+
+        .view-details-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .product-card:hover .view-details-overlay {
+            opacity: 1;
+        }
+
+        .view-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 14px;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .product-card:hover .view-btn {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Shop<span class="logo-accent">Easy</span></span>
+            </a>
+
+            <div class="nav-search" id="navSearch">
+                <form action="/search" method="GET" class="search-form">
+                    <input type="text" name="q" placeholder="Search for products..."
+                        value="{{ search_query if search_query else '' }}" class="search-input" id="searchInput"
+                        autocomplete="off">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+                <div class="search-suggestions" id="searchSuggestions"></div>
+            </div>
+
+            <div class="nav-actions">
+                {% if current_user.is_authenticated %}
+                <div class="nav-user-dropdown">
+                    <button class="nav-action-btn user-btn" id="userDropdownBtn">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="nav-label">{{ current_user.username }}</span>
+                    </button>
+                    <div class="dropdown-menu" id="userDropdown">
+                        {% if current_user.is_admin %}
+                        <a href="/admin" class="dropdown-item">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        {% endif %}
+                        <a href="/logout" class="dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="/login" class="nav-action-btn">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-label">Login</span>
+                </a>
+                {% endif %}
+                <a href="/cart" class="nav-action-btn cart-btn" id="cartBadgeBtnIndex">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="nav-label">Cart</span>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </a>
+                <button class="nav-action-btn mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <div class="mobile-nav-links">
+                <a href="/" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+                {% if current_user.is_authenticated %}
+                <a href="/cart" class="mobile-nav-link"><i class="fas fa-shopping-cart"></i> Cart</a>
+                <a href="/logout" class="mobile-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                {% else %}
+                <a href="/login" class="mobile-nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="/register" class="mobile-nav-link"><i class="fas fa-user-plus"></i> Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+        {% for category, message in messages %}
+        <div class="flash-message flash-{{ category }}">
+            <i
+                class="fas {% if category == 'success' %}fa-check-circle{% elif category == 'error' %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+            <span>{{ message }}</span>
+            <button class="flash-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% if not search_query %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center;">
+                <div class="hero-content" data-aos="fade-right">
+                    <div class="hero-badge">
+                        <i class="fas fa-sparkles"></i>
+                        <span>New Collection 2024</span>
+                    </div>
+                    <h1 class="hero-title">Redefining Your <br><span class="gradient-text">Personal Style</span></h1>
+                    <p class="hero-subtitle">Discover a wide selection of fashion and lifestyle products
+                        perfect for your everyday needs.</p>
+                    <div class="hero-actions">
+                        <a href="#products" class="btn btn-primary btn-lg"
+                            style="height: 64px; padding: 0 40px; font-weight: 800; border-radius: 16px;">
+                            <i class="fas fa-shopping-bag"></i> Shop Now
+                        </a>
+                        <a href="#categories" class="btn btn-outline btn-lg"
+                            style="height: 64px; padding: 0 40px; font-weight: 800; border-radius: 16px; margin-left: 16px;">
+                            View Gallery
+                        </a>
+                    </div>
+                </div>
+                <div class="hero-visual" data-aos="fade-left">
+                    <div class="hero-img-box box-lg">
+                        <img src="/images/shirt1.jpg" alt="Fashion">
+                    </div>
+                    <div class="hero-img-box box-sm">
+                        <img src="/images/watch.jpg" alt="Luxury Watch">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    {% if categories %}
+    <section class="section" id="categories" style="background: #fcfcfd;">
+        <div class="container">
+            <div class="section-header" style="text-align: center; margin-bottom: 60px;">
+                <h2 class="section-title">Shop by Category</h2>
+                <p style="color: #64748b; font-size: 18px; margin-top: 12px;">Find exactly what you are looking for
+                </p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
+                {% for cat in categories %}
+                <a href="/category/{{ cat }}" class="category-card" data-aos="fade-up"
+                    data-aos-delay="{{ loop.index * 50 }}">
+                    <div class="category-icon">
+                        <i
+                            class="fas {% if cat == 'Shirts' %}fa-shirt{% elif cat == 'Footwear' %}fa-walking{% elif cat == 'Watches' %}fa-clock{% else %}fa-box{% endif %}"></i>
+                    </div>
+                    <span
+                        style="font-weight: 800; color: #0f172a; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;">{{
+                        cat }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Featured -->
+    {% if featured_products %}
+    <section class="section">
+        <div class="container">
+            <div class="section-header"
+                style="margin-bottom: 60px; display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <h2 class="section-title">Featured Products</h2>
+                    <p style="color: #64748b; font-size: 18px; margin-top: 12px;">Our most popular pieces this season
+                    </p>
+                </div>
+                <a href="#products"
+                    style="color: var(--primary); font-weight: 800; display: flex; align-items: center; gap: 8px;">View
+                    All <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="products-grid">
+                {% for product in featured_products %}
+                <div class="product-card" data-aos="fade-up">
+                    <a href="/product/{{ product.id }}" class="product-link">
+                        <div class="product-image-wrap" style="aspect-ratio: 1 / 1.1;">
+                            <img src="/images/{{ product.image }}" class="product-image">
+                            <span
+                                style="position: absolute; top: 16px; left: 16px; background: white; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">NEW</span>
+                            <div class="view-details-overlay">
+                                <span class="view-btn">View Details</span>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="product-info" style="padding-top: 20px;">
+                        <span style="color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase;">{{
+                            product.category }}</span>
+                        <h3 style="font-size: 18px; font-weight: 800; margin: 4px 0 12px; color: #0f172a;">{{
+                            product.name }}</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 20px; font-weight: 800; color: #0f172a;">₹{{
+                                "%.0f"|format(product.price) }}</span>
+                            <button onclick="addToCart('{{ product.id }}')"
+                                style="width: 44px; height: 44px; border-radius: 12px; background: #0f172a; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"><i
+                                    class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+    {% endif %}
+
+    <!-- All Products -->
+    <section class="section" id="products">
+        <div class="container">
+            <div class="section-header" style="text-align: center; margin-bottom: 60px;">
+                <h2 class="section-title">Our Best Products</h2>
+                <p style="color: #64748b; font-size: 18px; margin-top: 12px;">Explore our full collection</p>
+            </div>
+            <div class="products-grid">
+                {% for product in all_products %}
+                <div class="product-card" data-aos="fade-up">
+                    <a href="/product/{{ product.id }}" class="product-link">
+                        <div class="product-image-wrap" style="aspect-ratio: 1 / 1.1;">
+                            <img src="/images/{{ product.image }}" class="product-image">
+                            <div class="view-details-overlay">
+                                <span class="view-btn">View Details</span>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="product-info" style="padding-top: 20px;">
+                        <span style="color: #94a3b8; font-size: 12px; font-weight: 700; text-transform: uppercase;">{{
+                            product.category }}</span>
+                        <h3 style="font-size: 18px; font-weight: 800; margin: 4px 0 12px; color: #0f172a;">{{
+                            product.name }}</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 18px; font-weight: 800; color: #0f172a;">₹{{
+                                "%.0f"|format(product.price) }}</span>
+                            <button onclick="addToCart('{{ product.id }}')"
+                                style="width: 40px; height: 40px; border-radius: 10px; background: #f1f5f9; color: #0f172a; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;"><i
+                                    class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content" data-aos="zoom-in">
+                <div class="newsletter-text">
+                    <h2>Stay in the loop</h2>
+                    <p>Get the latest updates on new arrivals and offers.</p>
+                </div>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email" class="newsletter-input" required>
+                    <button type="submit" class="btn btn-primary"
+                        style="height: 56px; padding: 0 32px; border-radius: 50px;">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 ShopEasy. Quality products for everyone.</p>
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-apple-pay"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+    <script src="/static/js/script.js"></script>
+</body>
+
+</html>
