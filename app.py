@@ -63,10 +63,6 @@ def create_app():
     # Create database tables and seed data
     with app.app_context():
         db.create_all()
-        # Force refresh for branding and price updates
-        from sqlalchemy import text
-        db.session.execute(text('DELETE FROM product'))
-        db.session.commit()
         seed_data()
     
     return app
