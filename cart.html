@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Your Shopping Cart - ShopEasy">
+  <title>Shopping Cart - ShopEasy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/static/css/responsive.css">
+  <style>
+    .cart-section {
+      padding: 120px 0 80px;
+    }
+
+    .cart-title {
+      font-size: 40px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+
+    .cart-subtitle {
+      color: #64748b;
+      font-size: 16px;
+      margin-bottom: 48px;
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 120px 1fr auto;
+      gap: 32px;
+      padding: 24px;
+      background: white;
+      border-radius: 20px;
+      border: 1px solid #f1f5f9;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      align-items: center;
+    }
+
+    .cart-item:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+      border-color: var(--primary);
+    }
+
+    .cart-item-img {
+      width: 120px;
+      height: 120px;
+      background: #f8fafc;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cart-item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .cart-item-info h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-info p {
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .cart-qty-control {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 12px;
+      width: fit-content;
+    }
+
+    .qty-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      transition: all 0.2s;
+    }
+
+    .qty-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .qty-val {
+      font-weight: 800;
+      font-size: 14px;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    .cart-item-price {
+      font-size: 20px;
+      font-weight: 800;
+      color: #0f172a;
+      text-align: right;
+    }
+
+    .remove-link {
+      color: #ef4444;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 8px;
+      display: inline-block;
+    }
+
+    .summary-card {
+      background: #0f172a;
+      color: white;
+      border-radius: 24px;
+      padding: 40px;
+      position: sticky;
+      top: 120px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .summary-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 32px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 16px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 15px;
+      color: #94a3b8;
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 24px;
+    }
+
+    .summary-total span {
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .summary-total strong {
+      font-size: 28px;
+      font-weight: 800;
+      color: white;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      height: 64px;
+      background: white;
+      color: #0f172a;
+      border-radius: 16px;
+      font-weight: 800;
+      font-size: 16px;
+      margin-top: 32px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .checkout-btn:hover {
+      background: #f1f5f9;
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <i class="fas fa-shopping-bag"></i>
+        <span>Shop<span class="logo-accent">Easy</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="/" class="nav-action-btn"><i class="fas fa-home"></i><span class="nav-label">Home</span></a>
+        <button class="nav-action-btn mobile-menu-btn" id="mobileMenuBtn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <div class="mobile-nav-links">
+        <a href="/" class="mobile-nav-link"><i class="fas fa-home"></i> Home</a>
+        {% if current_user.is_authenticated %}
+        <a href="/cart" class="mobile-nav-link"><i class="fas fa-shopping-cart"></i> Cart</a>
+        <a href="/logout" class="mobile-nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% else %}
+        <a href="/login" class="mobile-nav-link"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="/register" class="mobile-nav-link"><i class="fas fa-user-plus"></i> Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-container">
+    {% for category, message in messages %}
+    <div class="flash-message flash-{{ category }}">
+      <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+      <span>{{ message }}</span>
+      <button class="flash-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <section class="cart-section">
+    <div class="container">
+      <h1 class="cart-title">Your Shopping Cart</h1>
+      <p class="cart-subtitle">Review your selected items for checkout</p>
+
+      {% if cart_items %}
+      <div style="display: grid; grid-template-columns: 1fr 400px; gap: 60px; align-items: start;">
+        <!-- Cart Items List -->
+        <div class="cart-items-list">
+          {% for item in cart_items %}
+          <div class="cart-item" data-aos="fade-up" data-aos-delay="{{ loop.index * 50 }}">
+            <div class="cart-item-img">
+              <img src="/images/{{ item.product.image }}" alt="{{ item.product.name }}">
+            </div>
+            <div class="cart-item-info">
+              <h3>{{ item.product.name }}</h3>
+              <p>Category: {{ item.product.category }} {% if item.size %}| Size: {{ item.size }}{% endif %}</p>
+              <div class="cart-qty-control">
+                <button class="qty-btn" onclick="updateCartQty('{{ item.id }}', '{{ item.quantity - 1 }}')"><i
+                    class="fas fa-minus"></i></button>
+                <span class="qty-val">{{ item.quantity }}</span>
+                <button class="qty-btn" onclick="updateCartQty('{{ item.id }}', '{{ item.quantity + 1 }}')"><i
+                    class="fas fa-plus"></i></button>
+              </div>
+              <a href="javascript:void(0)" onclick="removeCartItem('{{ item.id }}')" class="remove-link">Remove Item</a>
+            </div>
+            <div class="cart-item-price">
+              ₹{{ "%.2f"|format(item.product.price * item.quantity) }}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Summary -->
+        <div class="cart-summary" data-aos="fade-left">
+          <div class="summary-card">
+            <h2 class="summary-title">Summary</h2>
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <span style="color: white;">₹{{ "%.2f"|format(total) }}</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span style="color: #10b981; font-weight: 800;">{% if total >= 999 %}FREE{% else %}₹99.00{% endif
+                %}</span>
+            </div>
+            <div class="summary-total">
+              <span>Est. Total</span>
+              <strong>₹{{ "%.2f"|format(total if total >= 999 else total + 99) }}</strong>
+            </div>
+            <button onclick="window.location.href='/checkout'" class="checkout-btn">
+              PROCEED TO CHECKOUT
+            </button>
+            <p style="text-align: center; margin-top: 24px; font-size: 13px; color: #94a3b8;">
+              <i class="fas fa-shield-alt"></i> Secure and encrypted checkout
+            </p>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div data-aos="zoom-in" style="text-align: center; padding: 100px 0;">
+        <i class="fas fa-shopping-bag" style="font-size: 64px; color: #f1f5f9; margin-bottom: 24px;"></i>
+        <h3 style="font-size: 24px; font-weight: 800;">Your cart is empty</h3>
+        <p style="color: #64748b; margin: 12px 0 32px;">Discover our latest arrivals and find something you love.</p>
+        <a href="/" class="btn btn-primary" style="padding: 16px 40px; border-radius: 12px; font-weight: 800;">Explore
+          Products</a>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2024 ShopEasy. Handcrafted for excellence.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 800, once: true });
+  </script>
+  <script src="/static/js/script.js"></script>
+</body>
+
+</html>
