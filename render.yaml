@@ -1,25 +1,26 @@
-# shopeasy/render.yaml
-databases:
-  # Not using a PostgreSQL database instance for now since SQLite is specified.
-
+# ShopEasy - Render Deployment Configuration
 services:
   - type: web
     name: shopeasy-flask
     env: python
+    region: singapore  # closest to India
+    plan: free
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn -w 4 -b 0.0.0.0:$PORT app:app"
+    startCommand: "gunicorn -w 2 -b 0.0.0.0:$PORT --timeout 120 wsgi:app"
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: "3.11.0"
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        value: sqlite:///shopeasy_v2.db
+        value: sqlite:////opt/render/project/src/instance/shopeasy_v2.db
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
         sync: false
+      - key: FLASK_ENV
+        value: production
     disk:
-      name: sqlite-data
+      name: shopeasy-data
       mountPath: /opt/render/project/src/instance
       sizeGB: 1

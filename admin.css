@@ -15,7 +15,8 @@
 }
 
 .admin-body {
-    background: #f8fafc;
+    background-image: radial-gradient(circle 311px at 8.6% 27.9%, rgba(62, 147, 252, 0.57) 12.9%, rgba(239, 183, 192, 0.44) 91.2%);
+    background-attachment: fixed;
     min-height: 100vh;
     display: flex;
     overflow-x: hidden;
@@ -177,11 +178,13 @@
 }
 
 .stat-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     padding: 24px;
     border-radius: 20px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    border: 1px solid var(--admin-border);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     gap: 20px;
@@ -242,12 +245,15 @@
 /* ──────────────── TABS ──────────────── */
 .admin-tabs {
     display: flex;
-    background: #f1f5f9;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     padding: 6px;
     border-radius: 14px;
     width: fit-content;
     margin-bottom: 32px;
     gap: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .admin-tab {
@@ -272,9 +278,11 @@
 
 /* ──────────────── TABLES ──────────────── */
 .admin-table-container {
-    background: white;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: 20px;
-    border: 1px solid var(--admin-border);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -286,19 +294,19 @@
 }
 
 .admin-table th {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.4);
     padding: 16px 24px;
     font-size: 12px;
     font-weight: 700;
     color: #64748b;
     text-transform: uppercase;
     letter-spacing: 1px;
-    border-bottom: 1px solid var(--admin-border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .admin-table td {
     padding: 20px 24px;
-    border-bottom: 1px solid var(--admin-border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
     vertical-align: middle;
 }
 
@@ -307,7 +315,7 @@
 }
 
 .admin-table tr:hover {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .table-product-img {
@@ -403,10 +411,12 @@
 
 /* ──────────────── FORMS ──────────────── */
 .admin-form-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     padding: 40px;
     border-radius: 20px;
-    border: 1px solid var(--admin-border);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     max-width: 900px;
 }
 

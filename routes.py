@@ -108,13 +108,22 @@ def forgot_password():
 @main.route('/checkout')
 @login_required
 def checkout():
+    import urllib.parse
     cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
     if not cart_items:
         flash('Your cart is empty!', 'warning')
         return redirect(url_for('main.cart'))
     total = sum(item.product.price * item.quantity for item in cart_items)
     razorpay_key = current_app.config.get('RAZORPAY_KEY_ID', '')
-    return render_template('checkout.html', cart_items=cart_items, total=total, razorpay_key=razorpay_key)
+    
+    # Generate unique QR data for UPI
+    upi_id = "shopeasy@upi"
+    upi_name = "ShopEasy"
+    transaction_note = f"Order_for_{current_user.username}"
+    upi_url = f"upi://pay?pa={upi_id}&pn={upi_name}&am={total}&cu=INR&tn={transaction_note}"
+    qr_data = urllib.parse.quote(upi_url)
+    
+    return render_template('checkout.html', cart_items=cart_items, total=total, razorpay_key=razorpay_key, qr_data=qr_data)
 
 
 @main.route('/success')

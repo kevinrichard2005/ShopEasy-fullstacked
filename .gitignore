@@ -5,11 +5,12 @@ __pycache__/
 venv/
 .env
 
-# Database
-instance/
-*.db
+# Database - ignore DB file but keep folder via .gitkeep
+instance/*.db
+# Keep the .gitkeep so Render/Heroku sees the folder
+!instance/.gitkeep
 
-# Static
+# Uploaded images (user uploaded) — but keep seeded defaults
 static/images/*
 !static/images/.gitkeep
 
@@ -19,3 +20,7 @@ Thumbs.db
 
 # Flask
 .flask_env
+
+# IDEs
+.vscode/
+.idea/

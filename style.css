@@ -37,7 +37,8 @@
 body {
     font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
     color: var(--text-main);
-    background: #FFFFFF;
+    background-image: radial-gradient(circle 311px at 8.6% 27.9%, rgba(62, 147, 252, 0.57) 12.9%, rgba(239, 183, 192, 0.44) 91.2%);
+    background-attachment: fixed;
     line-height: 1.5;
     overflow-x: hidden;
 }
@@ -53,11 +54,11 @@ ul {
 }
 
 .section-featured {
-    background-color: var(--gray-50) !important;
+    background-color: transparent !important;
 }
 
 .section-white {
-    background-color: var(--white) !important;
+    background-color: transparent !important;
 }
 
 .container {
@@ -176,9 +177,9 @@ section {
     left: 0;
     width: 100%;
     height: 80px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     z-index: 1000;
     transition: var(--transition);
@@ -186,7 +187,7 @@ section {
 
 .navbar-scrolled {
     height: 70px;
-    background: var(--white);
+    background: rgba(255, 255, 255, 0.7);
     box-shadow: var(--shadow);
 }
 
@@ -438,8 +439,7 @@ section {
     position: relative;
     padding: 160px 0 100px;
     overflow: hidden;
-    background: radial-gradient(circle at top right, #EBF8FF, transparent),
-        radial-gradient(circle at bottom left, #F0F4F8, transparent);
+    background: transparent;
 }
 
 .hero-bg-shapes {
@@ -603,9 +603,9 @@ section {
 /* ──────────────── FEATURES BAR ──────────────── */
 
 .features-bar {
-    background: var(--white);
+    background: transparent;
     padding: 40px 0;
-    border-bottom: 1px solid var(--gray-100);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .features-grid {
@@ -673,11 +673,13 @@ section {
 }
 
 .product-card {
-    background: var(--white);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: var(--radius);
     overflow: hidden;
     transition: var(--transition);
-    border: 1px solid var(--gray-100);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -694,7 +696,7 @@ section {
     border-radius: 20px;
     overflow: hidden;
     height: 320px;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1403,9 +1405,11 @@ section {
     align-items: center;
     gap: 20px;
     padding: 16px;
-    background: var(--gray-50);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: 16px;
-    border: 1px solid var(--gray-200);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .review-item-image {
@@ -1507,11 +1511,13 @@ section {
 }
 
 .summary-card {
-    background: var(--white);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     padding: 32px;
     border-radius: 24px;
     box-shadow: var(--shadow-lg);
-    border: 1px solid var(--gray-100);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .summary-title {
@@ -1566,7 +1572,7 @@ section {
 }
 
 .review-shipping {
-    background: var(--gray-50);
+    background: rgba(255, 255, 255, 0.5);
     padding: 20px;
     border-radius: 16px;
     margin-bottom: 32px;
@@ -1590,10 +1596,10 @@ section {
 }
 
 .review-detail-card {
-    background: var(--white);
+    background: rgba(255, 255, 255, 0.6);
     padding: 16px;
     border-radius: 12px;
-    border: 1px solid var(--gray-200);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: flex-start;
     gap: 12px;

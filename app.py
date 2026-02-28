@@ -6,8 +6,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-print(f"SHOEASY_DEBUG: Current Dir: {current_dir}")
-print(f"SHOEASY_DEBUG: Files in dir: {os.listdir(current_dir)}")
 
 from flask import Flask, send_from_directory
 from flask_login import LoginManager
@@ -62,6 +60,8 @@ def create_app():
     
     # Create database tables and seed data
     with app.app_context():
+        # Ensure instance folder exists for SQLite
+        os.makedirs(app.instance_path, exist_ok=True)
         db.create_all()
         seed_data()
     
@@ -257,4 +257,4 @@ def seed_data():
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, use_reloader=False, use_debugger=False, host='0.0.0.0', port=5000)
