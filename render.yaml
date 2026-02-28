@@ -9,7 +9,7 @@ services:
     startCommand: "gunicorn -w 2 -b 0.0.0.0:$PORT --timeout 120 wsgi:app"
     envVars:
       - key: PYTHON_VERSION
-        value: "3.11.0"
+        value: "3.11.9"
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
