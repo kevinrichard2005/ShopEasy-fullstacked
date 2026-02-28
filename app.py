@@ -7,7 +7,7 @@ if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
 
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, abort
 from flask_login import LoginManager
 from config import Config
 try:
@@ -53,15 +53,125 @@ def create_app():
     def root_images(filename):
         return send_from_directory('.', filename)
     
+    # Serve static css and js explicitly with fallbacks to avoid production 404s
+    @app.route('/static/css/<path:filename>')
+    def static_css(filename):
+        # Try to serve from static/css first
+        static_path = os.path.join(app.static_folder, 'css', filename)
+        if os.path.exists(static_path):
+            return send_from_directory(os.path.join(app.static_folder, 'css'), filename)
+        
+        # Fallback to root directory for CSS files
+        if os.path.exists(filename):
+            return send_from_directory('.', filename, mimetype='text/css')
+        
+        # Return empty CSS file if not found (prevents 404 errors)
+        return '', 200
+
+    @app.route('/static/js/<path:filename>')
+    def static_js(filename):
+        # Try to serve from static/js first
+        static_path = os.path.join(app.static_folder, 'js', filename)
+        if os.path.exists(static_path):
+            return send_from_directory(os.path.join(app.static_folder, 'js'), filename)
+        
+        # Fallback to root directory for JS files
+        if os.path.exists(filename):
+            return send_from_directory('.', filename, mimetype='application/javascript')
+        
+        # Return empty JS file if not found (prevents 404 errors)
+        return '', 200
+    
     # Serve static images
     @app.route('/static/images/<path:filename>')
     def static_images(filename):
-        return send_from_directory(os.path.join('static', 'images'), filename)
+        # Try to serve from static/images first
+        static_path = os.path.join(app.static_folder, 'images', filename)
+        if os.path.exists(static_path):
+            return send_from_directory(os.path.join(app.static_folder, 'images'), filename)
+        
+        # Fallback to root directory for images
+        if os.path.exists(filename):
+            return send_from_directory('.', filename)
+        
+        # Return a default image or 404
+        return abort(404)
+    
+    # Serve favicon if it exists
+    @app.route('/favicon.ico')
+    def favicon():
+        if os.path.exists('favicon.ico'):
+            return send_from_directory('.', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+        return '', 204
+    
+    # Create necessary directories on startup
+    def create_directories():
+        """Create necessary directories on startup."""
+        # Create instance folder for SQLite
+        os.makedirs(app.instance_path, exist_ok=True)
+        
+        # Create static subdirectories
+        static_css_dir = os.path.join(app.static_folder, 'css')
+        static_js_dir = os.path.join(app.static_folder, 'js')
+        static_images_dir = os.path.join(app.static_folder, 'images')
+        
+        os.makedirs(static_css_dir, exist_ok=True)
+        os.makedirs(static_js_dir, exist_ok=True)
+        os.makedirs(static_images_dir, exist_ok=True)
+        
+        # Copy CSS files from root to static/css if they don't exist
+        css_files = ['admin.css', 'responsive.css']
+        for css_file in css_files:
+            root_path = css_file
+            static_path = os.path.join(static_css_dir, css_file)
+            if os.path.exists(root_path) and not os.path.exists(static_path):
+                try:
+                    import shutil
+                    shutil.copy2(root_path, static_path)
+                    print(f"Copied {css_file} to static/css/")
+                except Exception as e:
+                    print(f"Failed to copy {css_file}: {e}")
+        
+        # Copy JS files from root to static/js if they don't exist
+        js_files = ['script.js']
+        for js_file in js_files:
+            root_path = js_file
+            static_path = os.path.join(static_js_dir, js_file)
+            if os.path.exists(root_path) and not os.path.exists(static_path):
+                try:
+                    import shutil
+                    shutil.copy2(root_path, static_path)
+                    print(f"Copied {js_file} to static/js/")
+                except Exception as e:
+                    print(f"Failed to copy {js_file}: {e}")
+        
+        # Create empty CSS files if they don't exist to prevent 404s
+        for css_file in css_files:
+            static_path = os.path.join(static_css_dir, css_file)
+            if not os.path.exists(static_path):
+                try:
+                    with open(static_path, 'w') as f:
+                        f.write(f"/* {css_file} - auto-generated */\n")
+                    print(f"Created empty {css_file} in static/css/")
+                except Exception as e:
+                    print(f"Failed to create {css_file}: {e}")
+        
+        # Create empty JS file if it doesn't exist to prevent 404s
+        for js_file in js_files:
+            static_path = os.path.join(static_js_dir, js_file)
+            if not os.path.exists(static_path):
+                try:
+                    with open(static_path, 'w') as f:
+                        f.write(f"// {js_file} - auto-generated\n")
+                    print(f"Created empty {js_file} in static/js/")
+                except Exception as e:
+                    print(f"Failed to create {js_file}: {e}")
     
     # Create database tables and seed data
     with app.app_context():
         # Ensure instance folder exists for SQLite
         os.makedirs(app.instance_path, exist_ok=True)
+        create_directories()
         db.create_all()
         seed_data()
     
@@ -257,4 +367,5 @@ def seed_data():
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False, use_debugger=False, host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)

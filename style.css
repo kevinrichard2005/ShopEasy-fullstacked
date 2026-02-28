@@ -353,6 +353,10 @@ section {
     display: none;
 }
 
+.mobile-menu {
+    display: none;
+}
+
 /* Product Page & Cart Styles */
 .detail-actions {
     display: flex;
